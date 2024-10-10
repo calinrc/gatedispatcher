@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.Toast
 
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.preference.PreferenceManager
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,14 +36,37 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         Log.d(TAG, "onCreate called")
-        requestSmsPermission()
+        requestSmsAndCallPermission()
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val phoneNumber = sharedPreferences.getString("phone_number", "")
+        val activationText = sharedPreferences.getString("activation_text", "")
+
+        if (phoneNumber.isNullOrEmpty() || activationText.isNullOrEmpty()) {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+        val gateButton: Button = findViewById(R.id.button_gate)
+
+        gateButton.setOnClickListener {
+            if (!phoneNumber.isNullOrEmpty()) {
+                Toast.makeText(
+                    this,
+                    applicationContext.getString(R.string.gate_state_change_action_title),
+                    Toast.LENGTH_SHORT
+                ).show()
+                SmsReceiver.initiateCall(applicationContext, phoneNumber)
+            }
+        }
     }
 
-    private fun requestSmsPermission() {
-        val permission = Manifest.permission.RECEIVE_SMS
-        val grant = ContextCompat.checkSelfPermission(this, permission)
-        if (grant != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(permission), REQUEST_CODE_SMS_PERMISSIONS)
+    private fun requestSmsAndCallPermission() {
+        val smsPermission = Manifest.permission.RECEIVE_SMS
+        val callPermission = Manifest.permission.CALL_PHONE
+        val grantSms = ContextCompat.checkSelfPermission(this, smsPermission)
+        val grantCall = ContextCompat.checkSelfPermission(this, callPermission)
+        if (grantSms != PackageManager.PERMISSION_GRANTED || grantCall != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(smsPermission, callPermission), REQUEST_CODE_SMS_PERMISSIONS)
         }
     }
 

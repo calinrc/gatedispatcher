@@ -3,15 +3,36 @@
 
     <PreferenceCategory app:title="@string/settings_header">
 
+        <EditTextPreference
+            android:inputType="phone"
+            app:key="phone_number"
+            app:title="@string/phone_number"
+            app:useSimpleSummaryProvider="true" />
 
 
         <EditTextPreference
-            android:inputType="textPassword"
+            android:inputType="text"
             android:selectAllOnFocus="true"
-            app:key="password"
-            app:title="@string/password"
+            app:key="activation_text"
+            app:title="@string/activation_text"
             android:imeOptions="actionDone"
+            app:useSimpleSummaryProvider="true"
             />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:selectable="false"
+            app:disableDependentsState="false"
+            app:key="inclusion_list_enabled"
+            app:persistent="false"
+            app:title="@string/inclusion_list" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:selectable="false"
+            app:disableDependentsState="false"
+            app:key="exclusion_list_enabled"
+            app:persistent="false"
+            app:title="@string/exclusion_list" />
 
     </PreferenceCategory>
+
 </PreferenceScreen>
