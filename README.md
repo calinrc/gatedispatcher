@@ -22,3 +22,9 @@ In order to correctly receive any incoming message the solution is to unregister
 
 Details about how to disable RCS messages can be found on https://support.google.com/messages/answer/7189714?hl=en 
 
+## Permissions
+The application requires three types of permission:
+ - Read SMS
+ - Make Calls
+ - Display over other apps
+These permissions must be allowed in order to properly run the applications

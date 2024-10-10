@@ -2,6 +2,7 @@
     <string name="app_name">Gate Dispatcher</string>
     <string name="gate">Open Gate</string>
     <string name="gate_state_change_action_title">Gate state changed</string>
+    <string name="manage_overlay_permissions">Allow Gate Dispatcher to display over other apps</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>

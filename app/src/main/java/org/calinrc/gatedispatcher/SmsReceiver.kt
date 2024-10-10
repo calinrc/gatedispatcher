@@ -6,30 +6,42 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.telephony.SmsMessage
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
+import kotlinx.coroutines.Runnable
 
 
 class SmsReceiver : BroadcastReceiver() {
     companion object {
         private val TAG by lazy { SmsReceiver::class.java.simpleName }
         fun initiateCall(context: Context, phoneNumber: String) {
-            val callIntent = Intent(Intent.ACTION_CALL)
-            callIntent.setData(Uri.parse("tel:$phoneNumber"))
-            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.CALL_PHONE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // Request permission if not granted
-                Log.e(TAG, "SmsReceiver has no CALL_PHONE permission")
-                return
-            }
-            Log.d(TAG, "SmsReceiver initiateCall startActivity")
-            context.startActivity(callIntent)
+            Log.e(TAG, "SmsReceiver initiateCall on new coroutine")
+//            val looper: Looper = Looper.getMainLooper()
+//            val handler: Handler = Handler(looper)
+//            val monitor = Runnable {
+//                fun run() {
+                    val callIntent = Intent(Intent.ACTION_CALL)
+                    callIntent.setData(Uri.parse("tel:$phoneNumber"))
+                    callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    callIntent.addFlags(Intent.FLAG_FROM_BACKGROUND)
+                    if (ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.CALL_PHONE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        // Request permission if not granted
+                        Log.e(TAG, "SmsReceiver has no CALL_PHONE permission")
+                    } else {
+                        Log.d(TAG, "SmsReceiver initiateCall startActivity")
+                        context.startActivity(callIntent)
+                    }
+//                }
+//            }
+//            handler.post(monitor);
         }
     }
 

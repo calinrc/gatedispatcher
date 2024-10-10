@@ -3,14 +3,13 @@ package org.calinrc.gatedispatcher
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
-
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -37,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         }
         Log.d(TAG, "onCreate called")
         requestSmsAndCallPermission()
+        requestOverlayPermission()
         val sharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val phoneNumber = sharedPreferences.getString("phone_number", "")
@@ -66,8 +66,25 @@ class MainActivity : AppCompatActivity() {
         val grantSms = ContextCompat.checkSelfPermission(this, smsPermission)
         val grantCall = ContextCompat.checkSelfPermission(this, callPermission)
         if (grantSms != PackageManager.PERMISSION_GRANTED || grantCall != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(smsPermission, callPermission), REQUEST_CODE_SMS_PERMISSIONS)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(smsPermission, callPermission),
+                REQUEST_CODE_SMS_PERMISSIONS
+            )
         }
+    }
+
+    private fun requestOverlayPermission() {
+        if (!Settings.canDrawOverlays(this)) { // send user to the device settings
+            val manageOverlayIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+            Toast.makeText(
+                this,
+                applicationContext.getString(R.string.manage_overlay_permissions),
+                Toast.LENGTH_SHORT
+            ).show()
+            startActivity(manageOverlayIntent)
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -88,6 +105,7 @@ class MainActivity : AppCompatActivity() {
                 //findNavController(R.id.nav_host_fragment_content_main)
                 true
             }
+
             R.id.action_about -> {
                 val intent = Intent(this, AboutActivity::class.java)
                 startActivity(intent)
@@ -95,6 +113,7 @@ class MainActivity : AppCompatActivity() {
                 //findNavController(R.id.nav_host_fragment_content_main)
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
