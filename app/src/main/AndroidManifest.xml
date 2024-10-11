@@ -30,6 +30,15 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
+            android:name=".LoggingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_logging"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
             android:name=".AboutActivity"
             android:exported="false"
             android:label="@string/title_activity_about"

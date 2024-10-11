@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.preference.PreferenceManager
+import org.calinrc.gatedispatcher.trace.GateEventsTracer
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val phoneNumber = sharedPreferences.getString("phone_number", "")
         val activationText = sharedPreferences.getString("activation_text", "")
-
+        GateEventsTracer.initInstance(applicationContext)
         if (phoneNumber.isNullOrEmpty() || activationText.isNullOrEmpty()) {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                     applicationContext.getString(R.string.gate_state_change_action_title),
                     Toast.LENGTH_SHORT
                 ).show()
+                GateEventsTracer.getInstance().addTrace("Manual initiated gate event")
                 SmsReceiver.initiateCall(applicationContext, phoneNumber)
             }
         }
@@ -100,6 +102,13 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+                //findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_FirstFragment_to_SecondFragment)
+                //findNavController(R.id.nav_host_fragment_content_main)
+                true
+            }
+            R.id.action_logging -> {
+                val intent = Intent(this, LoggingActivity::class.java)
                 startActivity(intent)
                 //findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_FirstFragment_to_SecondFragment)
                 //findNavController(R.id.nav_host_fragment_content_main)
